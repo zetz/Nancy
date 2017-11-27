@@ -9,7 +9,7 @@
     /// (As the bytes are generated at app startup, because it's too slow to do per
     /// request, so the salt cannot be randomly generated and stored)
     /// </summary>
-    public class PassphraseKeyGenerator : IKeyGenerator
+    public class PassphraseKeyGenerator : IKeyGenerator, IDisposable
     {
         private readonly Rfc2898DeriveBytes provider;
 
@@ -39,6 +39,12 @@
         public byte[] GetBytes(int count)
         {
             return provider.GetBytes(count);
+        }
+
+        public void Dispose()
+        {
+            if (this.provider != null)
+                this.provider.Dispose();
         }
     }
 }

@@ -10,7 +10,7 @@ namespace Nancy.Diagnostics
     using Nancy.Responses;
     using Nancy.TinyIoc;
 
-    internal class DiagnosticsModuleCatalog : INancyModuleCatalog
+    internal class DiagnosticsModuleCatalog : INancyModuleCatalog, IDisposable
     {
         private readonly TinyIoCContainer container;
 
@@ -74,6 +74,12 @@ namespace Nancy.Diagnostics
             }
 
             return diagContainer;
+        }
+
+        public void Dispose()
+        {
+            if (this.container != null)
+                this.container.Dispose();
         }
     }
 }

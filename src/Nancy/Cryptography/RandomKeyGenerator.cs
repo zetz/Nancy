@@ -1,11 +1,12 @@
 namespace Nancy.Cryptography
 {
+    using System;
     using System.Security.Cryptography;
 
     /// <summary>
     /// Generates random secure keys using RandomNumberGenerator
     /// </summary>
-    public class RandomKeyGenerator : IKeyGenerator
+    public class RandomKeyGenerator : IKeyGenerator, IDisposable
     {
         private readonly RandomNumberGenerator provider = RandomNumberGenerator.Create();
 
@@ -23,6 +24,12 @@ namespace Nancy.Cryptography
             this.provider.GetBytes(buffer);
 
             return buffer;
+        }
+
+        public void Dispose()
+        {
+            if (this.provider != null)
+                this.provider.Dispose();
         }
     }
 }
