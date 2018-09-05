@@ -80,7 +80,7 @@
 #endif
 
 
-#if NETSTANDARD1_6
+#if NETSTANDARD2_0
 #undef SERIALIZABLE
 #undef APPDOMAIN_GETASSEMBLIES
 #endif
@@ -3889,8 +3889,9 @@ namespace Nancy.TinyIoc
 
                 try
                 {
-                    args[parameterIndex] = parameters.ContainsKey(currentParam.Name) ?
-                                            parameters[currentParam.Name] :
+                    object value;
+                    args[parameterIndex] = parameters.TryGetValue(currentParam.Name, out value) ?
+                                            value :
                                             ResolveInternal(
                                                 new TypeRegistration(currentParam.ParameterType),
                                                 NamedParameterOverloads.Default,
@@ -4074,7 +4075,7 @@ namespace Nancy.TinyIoc
         #endregion
     }
 
-#if NETSTANDARD1_6
+#if NETSTANDARD2_0
     static class ReverseTypeExtender
     {
         public static bool IsClass(this Type type)
@@ -4129,7 +4130,7 @@ namespace Nancy.TinyIoc
     }
 #endif
     // reverse shim for WinRT SR changes...
-#if (!NETFX_CORE && !NETSTANDARD1_6)
+#if (!NETFX_CORE && !NETSTANDARD2_0)
     static class ReverseTypeExtender
     {
         public static bool IsClass(this Type type)

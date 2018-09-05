@@ -259,7 +259,8 @@ namespace Nancy.Json.Simple
         /// </returns>
         public bool Contains(KeyValuePair<string, object> item)
         {
-            return this._members.ContainsKey(item.Key) && this._members[item.Key] == item.Value;
+            object value;
+            return this._members.TryGetValue(item.Key, out value) && value == item.Value;
         }
 
         /// <summary>
@@ -530,6 +531,11 @@ namespace Nancy.Json.Simple
         /// <returns>An IList&lt;object>, a IDictionary&lt;string,object>, a double, a string, null, true, or false</returns>
         public static object DeserializeObject(string json)
         {
+            if (string.IsNullOrWhiteSpace(json))
+            {
+                return null;
+            }
+
             object obj;
             if (TryDeserializeObject(json, out obj))
                 return obj;

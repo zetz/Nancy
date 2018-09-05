@@ -39,9 +39,9 @@
 
             // Then
             A.CallTo(() => pipelines.BeforeRequest.AddItemToStartOfPipeline(A<Func<NancyContext, Response>>.Ignored))
-                .MustHaveHappened(Repeated.Exactly.Once);
+                .MustHaveHappenedOnceExactly();
             A.CallTo(() => pipelines.AfterRequest.AddItemToEndOfPipeline(A<Action<NancyContext>>.Ignored))
-                .MustHaveHappened(Repeated.Exactly.Once);
+                .MustHaveHappenedOnceExactly();
         }
 
         [Fact]
@@ -220,6 +220,23 @@
             // Then
             result.Result.ShouldBeNull();
             context.CurrentUser.ShouldBeNull();
+        }
+
+        [Theory]
+        [InlineData("Basic")]
+        [InlineData("BASIC")]
+        [InlineData("basic")]
+        public void Pre_request_hook_should_call_user_validator_when_valid_scheme_in_auth_header(string scheme)
+        {
+            // Given
+            var context = CreateContextWithHeader(
+                "Authorization", new[] { scheme + " " + EncodeCredentials("foo", "bar") });
+
+            // When
+            var result = this.hooks.BeforeRequest.Invoke(context, new CancellationToken());
+
+            // Then
+            A.CallTo(() => config.UserValidator.Validate("foo", "bar")).MustHaveHappened();
         }
 
         [Fact]
